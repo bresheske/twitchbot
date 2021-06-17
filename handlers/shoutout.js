@@ -2,8 +2,6 @@ module.exports = (channel, tags, message, self, client) => {
     if(!message.toLowerCase().startsWith('!so'))
         return;
 
-    console.log(`!so: ${message}, ${tags.username}`);
-
     // grab the user to shout out
     let shoutoutuser = message.split(' ')[1];
     if (!shoutoutuser) {

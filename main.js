@@ -1,5 +1,10 @@
 // Big list of setup.
 const apiKey = process.env.API_KEY;
+if (!apiKey) {
+    console.error(`Required API_KEY in .env file missing.`);
+    process.exit(1);
+}
+
 const tmi = require('tmi.js');
 const client = new tmi.Client({
   options: { debug: true },
