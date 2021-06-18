@@ -21,8 +21,10 @@ const client = new tmi.Client({
 
 // Big list of handlers.
 const handlers = [
-    require('./handlers/hello'),
-    require('./handlers/shoutout')
+    require('./handlers/shoutout'),
+    require('./handlers/yo'),
+    require('./handlers/welcome'),
+    require('./handlers/goodBot')
 ];
 
 client.connect();
