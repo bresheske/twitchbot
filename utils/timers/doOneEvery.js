@@ -22,7 +22,8 @@ module.exports = (seconds, name, action) => {
         action();
     }
     // we have a previous action, but we have already waited long enough.
-    else if (previousAction.time + seconds <= currentTime) {
+    // OR - seconds is set to 0, which is mostly for testing environments.
+    else if (seconds == 0 || previousAction.time + seconds <= currentTime) {
         previousAction.time = currentTime;
         action();
     }
