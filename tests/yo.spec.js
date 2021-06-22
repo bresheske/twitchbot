@@ -31,4 +31,11 @@ describe(`yo tests`, () => {
         expect(message).toContain('yo');
     });
 
+    it(`yo - with a capital Y`, () => {
+        yo(null, {username: 'user'}, 'Yo friendo', null, mockClient, noDelayOptions);
+        const message = mockClient.getMessages()[0];
+        expect(message).toContain('yo');
+    });
+
+
 });

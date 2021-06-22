@@ -10,10 +10,11 @@ const doOneEvery = require('../utils/timers/doOneEvery');
 module.exports = (channel, tags, message, self, client, options) => {
 
     // easiest way I could think to do this was to break up the scenarios.
+    const tolower = message.toLowerCase();
     const yoActive = 
-            /^yo$/.test(message)
-        ||  /\syo\s/.test(message)
-        ||  /^yo\s/.test(message)
+            /^yo$/.test(tolower)
+        ||  /\syo\s/.test(tolower)
+        ||  /^yo\s/.test(tolower)
         ;
 
     if (!yoActive)
