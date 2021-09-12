@@ -24,7 +24,9 @@ const handlers = [
   require('./handlers/shoutout'),
   require('./handlers/yo'),
   require('./handlers/welcome'),
-  require('./handlers/goodBot')
+  require('./handlers/goodBot'),
+  require('./handlers/followBan'),
+  require('./handlers/timeOutMe')
 ];
 
 client.connect();
