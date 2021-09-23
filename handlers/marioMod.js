@@ -24,38 +24,59 @@ const handleTime = (channel, tags, message, self, client, options) => {
         return;
     }
 
+    // convert our string of numbers into an array of hex values.
+    const timeNumbers = timeToSet
+        .split('')
+        .map(digit => parseInt(digit));
+    const dataBuffer = Buffer.from(timeNumbers);
+
+    // after using CheatEngine, here's an offset to an address
+    // containing a pointer that ends up pointing to the correct address
+    // of the data that controls the timer shown on the screen.
+    const pointerAddress = 0x8D8BE8;
+    // and here's the offset to the location to find the actual data.
+    const offset = 0xF31
+
+    writeToPointer(pointerAddress, offset, dataBuffer);
+
+    client.say(channel, `@${tags.username} timer set to ${timeToSet}!`);
+};
+
+/**
+ * this function will write do a 1-depth pointer to the snes rom.
+ */
+const writeToPointer = (pointerAddress, offset, dataBuffer) => {
     // grab the processID from SNES9x (or the first 'snes' application)
     const snesId = memoryjs
         .getProcesses()
         .find(proc => proc.szExeFile.includes('snes'))
         .th32ProcessID;
-
+        
     // open the process for read/write
     const process = memoryjs.openProcess(snesId);
     const handle = process.handle;
+    
+    // gather all of the modules for the process.
+    // this gives us our base memory address for memory allocated
+    // for our game.
+    const snesMod = memoryjs.getModules(snesId)
+        .find(mod => mod.szModule.includes('snes'));
+    const baseAddress = snesMod.modBaseAddr;
 
-    // here's our memory locations for the SMW timer.
-    // these are 3 bytes for the hundred, tens, and ones values.
-    // a bit of a strange way to store a number honestly.
-    // note: these are hex literals, but in nodejs they exist as just numbers.
-    const timerHundred = 0x04273EA1;
-    const timerTens = 0x04273EA2;
-    const timerOnes = 0x04273EA3;
+    // read in a 4 byte pointer to find the address of the data we're looking for.
+    // note, we're using a specific endian syntax to reverse the bytes read.
+    const pointerToData = memoryjs.readBuffer(handle, baseAddress + pointerAddress, 4).readIntLE(0, 4);
+    const pointerWithOffset = pointerToData + offset;
 
-    // convert our string of numbers into an array of hex values.
-    const timeNumbers = timeToSet
-        .split('')
-        .map(digit => parseInt(digit));
-
-    memoryjs.writeMemory(handle, timerHundred, timeNumbers[0], 'byte');
-    memoryjs.writeMemory(handle, timerTens, timeNumbers[1], 'byte');
-    memoryjs.writeMemory(handle, timerOnes, timeNumbers[2], 'byte');
-
-    client.say(channel, `@${tags.username} timer set to ${timeToSet}!`);
-};
+    // finally write it out
+    memoryjs.writeBuffer(handle, pointerWithOffset, dataBuffer);
+}
 
 const isNumeric = (str) => {
     if (typeof str != "string")
         return false
     return !isNaN(str) && !isNaN(parseFloat(str)) 
 }
+
+
+

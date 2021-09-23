@@ -26,7 +26,8 @@ const handlers = [
   require('./handlers/welcome'),
   require('./handlers/goodBot'),
   require('./handlers/followBan'),
-  require('./handlers/timeOutMe')
+  require('./handlers/timeOutMe'),
+  require('./handlers/marioMod'),
 ];
 
 client.connect();
