@@ -13,6 +13,8 @@ module.exports = (channel, tags, message, self, client, options) => {
         handleTime(channel, tags, message, self, client, options);
     else if (tolower.startsWith('!cape'))
         handleCape(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!star'))
+        handleStar(channel, tags, message, self, client, options);
 
         
     return;
@@ -70,6 +72,25 @@ const handleCape = (channel, tags, message, self, client, options) => {
 
     client.say(channel, `@${tags.username} all caped up!`);
 };
+
+const handleStar = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn('mariomod')) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+
+    const pointerAddress = 0x8D8BE8;
+    const offset = 0x1490;
+    // this is the timer that counts down to 0, which ends the star effect.
+    const data = Buffer.from([0xFF]);
+
+    writeToPointer(pointerAddress, offset, data);
+
+    client.say(channel, `@${tags.username} starman go!`);
+};
+
 
 
 /**
