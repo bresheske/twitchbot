@@ -25,14 +25,12 @@ module.exports = (channel, tags, message, self, client) => {
     let threat = false;
     if (follower.toLowerCase().startsWith('hoss'))
         threat = true;
-    
-    // perhaps some other checks to go here.
-    // more on this later. maybe there's some other ways to detect threats.
+    if (follower.toLowerCase().startsWith('manofsteel'))
+        threat = true;
 
     // if there was a threat, it's time to act.
     if (threat) {
         client.say(channel, `/ban ${follower}`);
         client.say(channel, `@${follower}, you have been auto-banned. If you believe this is a mistake, contact the streamer.`);
     }
-
 }

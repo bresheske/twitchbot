@@ -26,5 +26,10 @@ describe(`followBan tests`, () => {
         expect(mockClient.getMessages()[0]).toBe('/ban hoss');
     });
 
+    it(`should ban user - manofsteel.`, () => {
+        followBan(null, {username: 'streamlabs'}, 'Thank you for following ManOfSteel0001!', null, mockClient);
+        expect(mockClient.getMessages()[0]).toBe('/ban ManOfSteel0001');
+    });
+
 
 });
