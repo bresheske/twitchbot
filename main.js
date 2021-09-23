@@ -28,6 +28,7 @@ const handlers = [
   require('./handlers/followBan'),
   require('./handlers/timeOutMe'),
   require('./handlers/marioMod'),
+  require('./handlers/switches')
 ];
 
 client.connect();
@@ -37,5 +38,12 @@ client.on('message', (channel, tags, message, self) => {
   if(self)
     return;
 
-  handlers.forEach(handler => handler(channel, tags, message, self, client));
+  handlers.forEach(handler => {
+    try {
+      handler(channel, tags, message, self, client);
+    }
+    catch(ex) {
+      console.error(ex);
+    }
+  })
 });

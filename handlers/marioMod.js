@@ -1,5 +1,6 @@
 const doOneEvery = require('../utils/timers/doOneEvery');
 const memoryjs = require('memoryjs');
+const switches = require('../utils/storage/switches');
 
 /**
  * a silly handler which listens to commands and injects data into SNES9x memory.
@@ -19,6 +20,13 @@ module.exports = (channel, tags, message, self, client, options) => {
 
 
 const handleTime = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn('mariomod')) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+    
 
     // grab the time to set.
     const timeToSet = message.split(' ')[1];
@@ -46,6 +54,12 @@ const handleTime = (channel, tags, message, self, client, options) => {
 };
 
 const handleCape = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn('mariomod')) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
 
     const pointerAddress = 0x8D8BE8;
     const offset = 0x19;
