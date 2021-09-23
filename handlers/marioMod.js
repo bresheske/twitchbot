@@ -10,6 +10,9 @@ module.exports = (channel, tags, message, self, client, options) => {
 
     if (tolower.startsWith('!time'))
         handleTime(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!cape'))
+        handleCape(channel, tags, message, self, client, options);
+
         
     return;
 }
@@ -41,6 +44,19 @@ const handleTime = (channel, tags, message, self, client, options) => {
 
     client.say(channel, `@${tags.username} timer set to ${timeToSet}!`);
 };
+
+const handleCape = (channel, tags, message, self, client, options) => {
+
+    const pointerAddress = 0x8D8BE8;
+    const offset = 0x19;
+    // 0 = small, 1 = big, 2 = cape, 3 = fireflower
+    const data = Buffer.from([0x02]);
+
+    writeToPointer(pointerAddress, offset, data);
+
+    client.say(channel, `@${tags.username} all caped up!`);
+};
+
 
 /**
  * this function will write do a 1-depth pointer to the snes rom.
