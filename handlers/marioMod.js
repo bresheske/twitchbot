@@ -1,6 +1,8 @@
 const doOneEvery = require('../utils/timers/doOneEvery');
 const memoryjs = require('memoryjs');
 const switches = require('../utils/storage/switches');
+const SWITCH_KEY = 'mariomod';
+
 
 /**
  * a silly handler which listens to commands and injects data into SNES9x memory.
@@ -13,18 +15,38 @@ module.exports = (channel, tags, message, self, client, options) => {
         handleTime(channel, tags, message, self, client, options);
     else if (tolower.startsWith('!cape'))
         handleCape(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!flower'))
+        handleFlower(channel, tags, message, self, client, options);
     else if (tolower.startsWith('!star'))
         handleStar(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!big'))
+        handleBig(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!small'))
+        handleSmall(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!pswitch'))
+        handlePSwitch(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!spswitch'))
+        handleSPSwitch(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!mariomod'))
+        handleHelp(channel, tags, message, self, client, options);
 
-        
+
     return;
 }
+
+const handleHelp = (channel, tags, message, self, client, options) => {
+    const status = switches.isSwitchOn(SWITCH_KEY);
+    let out = `@${tags.username} MarioMod is currently set to ${status ? 'ON' : 'OFF'}.`;
+    if (status)
+        out += `  List of fun commands you have access to: !cape, !flower, !star, !big, !small, !pswitch, !spswitch, !time <3-digit time>`;
+    client.say(channel, out);
+};
 
 
 const handleTime = (channel, tags, message, self, client, options) => {
 
     // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn('mariomod')) {
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
         client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
         return;
     }
@@ -55,10 +77,66 @@ const handleTime = (channel, tags, message, self, client, options) => {
     client.say(channel, `@${tags.username} timer set to ${timeToSet}!`);
 };
 
+const handleBig = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+
+    const pointerAddress = 0x8D8BE8;
+    const offset = 0x19;
+    // 0 = small, 1 = big, 2 = cape, 3 = fireflower
+    const data = Buffer.from([0x01]);
+
+    writeToPointer(pointerAddress, offset, data);
+
+    client.say(channel, `@${tags.username} we big yo!!`);
+};
+
+const handleSmall = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+
+    const pointerAddress = 0x8D8BE8;
+    const offset = 0x19;
+    // 0 = small, 1 = big, 2 = cape, 3 = fireflower
+    const data = Buffer.from([0x00]);
+
+    writeToPointer(pointerAddress, offset, data);
+
+    client.say(channel, `@${tags.username} we smol yo!`);
+};
+
+
+const handleFlower = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+
+    const pointerAddress = 0x8D8BE8;
+    const offset = 0x19;
+    // 0 = small, 1 = big, 2 = cape, 3 = fireflower
+    const data = Buffer.from([0x03]);
+
+    writeToPointer(pointerAddress, offset, data);
+
+    client.say(channel, `@${tags.username} flowerpower!`);
+};
+
+
 const handleCape = (channel, tags, message, self, client, options) => {
 
     // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn('mariomod')) {
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
         client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
         return;
     }
@@ -76,7 +154,7 @@ const handleCape = (channel, tags, message, self, client, options) => {
 const handleStar = (channel, tags, message, self, client, options) => {
 
     // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn('mariomod')) {
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
         client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
         return;
     }
@@ -91,6 +169,41 @@ const handleStar = (channel, tags, message, self, client, options) => {
     client.say(channel, `@${tags.username} starman go!`);
 };
 
+const handlePSwitch = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+
+    const pointerAddress = 0x8D8BE8;
+    const offset = 0x14AD;
+    // this is the timer that counts down to 0, which ends the effect
+    const data = Buffer.from([0xFF]);
+
+    writeToPointer(pointerAddress, offset, data);
+
+    client.say(channel, `@${tags.username} switched that P!`);
+};
+
+const handleSPSwitch = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+
+    const pointerAddress = 0x8D8BE8;
+    const offset = 0x14AE;
+    // this is the timer that counts down to 0, which ends the effect
+    const data = Buffer.from([0xFF]);
+
+    writeToPointer(pointerAddress, offset, data);
+
+    client.say(channel, `@${tags.username} switched that silver!`);
+};
 
 
 /**
