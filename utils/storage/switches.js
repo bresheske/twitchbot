@@ -51,8 +51,15 @@ const getAll = () => {
     return getData();
 };
 
+const runIfSwitchIsOn = (switchName, callback) => {
+    const sw = isSwitchOn(switchName);
+    if (sw)
+        callback();
+};
+
 module.exports = {
     isSwitchOn,
     toggleSwitch,
-    getAll
+    getAll,
+    runIfSwitchIsOn
 };

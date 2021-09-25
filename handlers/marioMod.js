@@ -14,31 +14,31 @@ module.exports = (channel, tags, message, self, client, options) => {
     if (tolower.startsWith('!time'))
         handleTime(channel, tags, message, self, client, options);
     else if (tolower.startsWith('!cape'))
-        handleCape(channel, tags, message, self, client, options);
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0019, Buffer.from([0x02])));
     else if (tolower.startsWith('!flower'))
-        handleFlower(channel, tags, message, self, client, options);
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0019, Buffer.from([0x03])));
     else if (tolower.startsWith('!star'))
         handleStar(channel, tags, message, self, client, options);
     else if (tolower.startsWith('!big'))
-        handleBig(channel, tags, message, self, client, options);
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0019, Buffer.from([0x01])));
     else if (tolower.startsWith('!small'))
-        handleSmall(channel, tags, message, self, client, options);
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0019, Buffer.from([0x00])));
     else if (tolower.startsWith('!pswitch'))
-        handlePSwitch(channel, tags, message, self, client, options);
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E14AD, Buffer.from([0xFF])));
     else if (tolower.startsWith('!spswitch'))
-        handleSPSwitch(channel, tags, message, self, client, options);
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E14AE, Buffer.from([0xFF])));
     else if (tolower.startsWith('!mariomod'))
         handleHelp(channel, tags, message, self, client, options);
     else if (tolower.startsWith('!kaizo'))
         handleKaizo(channel, tags, message, self, client, options);
     else if (tolower.startsWith('!water'))
-        handleWater(channel, tags, message, self, client, options);
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0085, Buffer.from([0x01])));
     else if (tolower.startsWith('!land'))
-        handleLand(channel, tags, message, self, client, options);
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0085, Buffer.from([0x00])));
     else if (tolower.startsWith('!ice'))
-        handleIce(channel, tags, message, self, client, options);
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0086, Buffer.from([0xFF])));
     else if (tolower.startsWith('!thaw'))
-        handleThaw(channel, tags, message, self, client, options);
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0086, Buffer.from([0x00])));
 
 
 
@@ -81,104 +81,6 @@ const handleTime = (channel, tags, message, self, client, options) => {
     writeToSWMAddress(0x007E0F31, dataBuffer);
 };
 
-const handleWater = (channel, tags, message, self, client, options) => {
-
-    // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn(SWITCH_KEY)) {
-        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
-        return;
-    }
-
-    writeToSWMAddress(0x007E0085, Buffer.from([0x01]));
-};
-
-const handleIce = (channel, tags, message, self, client, options) => {
-
-    // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn(SWITCH_KEY)) {
-        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
-        return;
-    }
-
-    writeToSWMAddress(0x007E0086, Buffer.from([0xFF]));
-};
-
-const handleThaw = (channel, tags, message, self, client, options) => {
-
-    // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn(SWITCH_KEY)) {
-        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
-        return;
-    }
-
-    writeToSWMAddress(0x007E0086, Buffer.from([0x00]));
-};
-
-
-const handleLand = (channel, tags, message, self, client, options) => {
-
-    // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn(SWITCH_KEY)) {
-        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
-        return;
-    }
-
-    writeToSWMAddress(0x007E0085, Buffer.from([0x00]));
-};
-
-
-
-const handleBig = (channel, tags, message, self, client, options) => {
-
-    // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn(SWITCH_KEY)) {
-        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
-        return;
-    }
-
-    const data = Buffer.from([0x01]);
-    writeToSWMAddress(0x007E0019, data);
-
-};
-
-const handleSmall = (channel, tags, message, self, client, options) => {
-
-    // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn(SWITCH_KEY)) {
-        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
-        return;
-    }
-
-    const data = Buffer.from([0x00]);
-    writeToSWMAddress(0x007E0019, data);
-};
-
-
-const handleFlower = (channel, tags, message, self, client, options) => {
-
-    // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn(SWITCH_KEY)) {
-        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
-        return;
-    }
-
-    const data = Buffer.from([0x03]);
-    writeToSWMAddress(0x007E0019, data);
-};
-
-
-const handleCape = (channel, tags, message, self, client, options) => {
-
-    // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn(SWITCH_KEY)) {
-        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
-        return;
-    }
-
-    const data = Buffer.from([0x02]);
-    writeToSWMAddress(0x007E0019, data);
-};
-
 const handleStar = (channel, tags, message, self, client, options) => {
 
     // first check our switches to see if the mariomod is actually on.
@@ -194,30 +96,6 @@ const handleStar = (channel, tags, message, self, client, options) => {
 
     writeToPointer(pointerAddress, offset, data);
 
-};
-
-const handlePSwitch = (channel, tags, message, self, client, options) => {
-
-    // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn(SWITCH_KEY)) {
-        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
-        return;
-    }
-
-    const data = Buffer.from([0xFF]);
-    writeToSWMAddress(0x007E14AD, data);
-};
-
-const handleSPSwitch = (channel, tags, message, self, client, options) => {
-
-    // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn(SWITCH_KEY)) {
-        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
-        return;
-    }
-
-    const data = Buffer.from([0xFF]);
-    writeToSWMAddress(0x007E14AE, data);
 };
 
 const handleKaizo = (channel, tags, message, self, client, options) => {
