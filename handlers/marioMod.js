@@ -39,11 +39,31 @@ module.exports = (channel, tags, message, self, client, options) => {
         switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0086, Buffer.from([0xFF])));
     else if (tolower.startsWith('!thaw'))
         switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0086, Buffer.from([0x00])));
-
-
-
-
-
+    else if (tolower.startsWith('!pballoon'))
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => {
+            // writeToSWMAddress(0x007E13F3, Buffer.from([0x09]));
+            // writeToSWMAddress(0x007E1891, Buffer.from([0xFF]));
+        });
+    else if (tolower.startsWith('!kickright'))
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => {
+            writeToSWMAddress(0x007E007B, Buffer.from([0x7F]));
+            writeToSWMAddress(0x007E007D, Buffer.from([0x80]));
+        });
+    else if (tolower.startsWith('!kickleft'))
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => {
+            writeToSWMAddress(0x007E007B, Buffer.from([0x80]));
+            writeToSWMAddress(0x007E007D, Buffer.from([0x80]));
+        });
+    else if (tolower.startsWith('!messagebox'))
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => {
+            writeToPointer(0x08D8EF8, 0xA968, Buffer.from([0x1]));
+            writeToSWMAddress(0x007E1426, Buffer.from([0x01]));
+        });
+    else if (tolower.startsWith('!offset'))
+        switches.runIfSwitchIsOn(SWITCH_KEY, () => {
+            const offset = convertSMWCentralAddressToReal(0x0);
+            client.say(channel, `The current offset is :${offset.toString(16)}.`)
+        });
     return;
 }
 
@@ -51,7 +71,7 @@ const handleHelp = (channel, tags, message, self, client, options) => {
     const status = switches.isSwitchOn(SWITCH_KEY);
     let out = `@${tags.username} MarioMod is currently set to ${status ? 'ON' : 'OFF'}.`;
     if (status)
-        out += `  List of fun commands you have access to: !cape, !flower, !star, !big, !small, !pswitch, !spswitch, !time <3-digit time>`;
+        out += `  List of fun commands you have access to: !cape, !flower, !star, !big, !small, !pswitch, !spswitch, !water, !land, !ice, !thaw, !kickright, !kickleft, !time <3-digit time>`;
     client.say(channel, out);
 };
 
