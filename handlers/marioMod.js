@@ -29,6 +29,9 @@ module.exports = (channel, tags, message, self, client, options) => {
         handleSPSwitch(channel, tags, message, self, client, options);
     else if (tolower.startsWith('!mariomod'))
         handleHelp(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!kaizo'))
+        handleKaizo(channel, tags, message, self, client, options);
+
 
 
     return;
@@ -73,8 +76,6 @@ const handleTime = (channel, tags, message, self, client, options) => {
     const offset = 0xF31
 
     writeToPointer(pointerAddress, offset, dataBuffer);
-
-    client.say(channel, `@${tags.username} timer set to ${timeToSet}!`);
 };
 
 const handleBig = (channel, tags, message, self, client, options) => {
@@ -91,8 +92,6 @@ const handleBig = (channel, tags, message, self, client, options) => {
     const data = Buffer.from([0x01]);
 
     writeToPointer(pointerAddress, offset, data);
-
-    client.say(channel, `@${tags.username} we big yo!!`);
 };
 
 const handleSmall = (channel, tags, message, self, client, options) => {
@@ -109,8 +108,6 @@ const handleSmall = (channel, tags, message, self, client, options) => {
     const data = Buffer.from([0x00]);
 
     writeToPointer(pointerAddress, offset, data);
-
-    client.say(channel, `@${tags.username} we smol yo!`);
 };
 
 
@@ -128,8 +125,6 @@ const handleFlower = (channel, tags, message, self, client, options) => {
     const data = Buffer.from([0x03]);
 
     writeToPointer(pointerAddress, offset, data);
-
-    client.say(channel, `@${tags.username} flowerpower!`);
 };
 
 
@@ -147,8 +142,6 @@ const handleCape = (channel, tags, message, self, client, options) => {
     const data = Buffer.from([0x02]);
 
     writeToPointer(pointerAddress, offset, data);
-
-    client.say(channel, `@${tags.username} all caped up!`);
 };
 
 const handleStar = (channel, tags, message, self, client, options) => {
@@ -166,7 +159,6 @@ const handleStar = (channel, tags, message, self, client, options) => {
 
     writeToPointer(pointerAddress, offset, data);
 
-    client.say(channel, `@${tags.username} starman go!`);
 };
 
 const handlePSwitch = (channel, tags, message, self, client, options) => {
@@ -183,8 +175,6 @@ const handlePSwitch = (channel, tags, message, self, client, options) => {
     const data = Buffer.from([0xFF]);
 
     writeToPointer(pointerAddress, offset, data);
-
-    client.say(channel, `@${tags.username} switched that P!`);
 };
 
 const handleSPSwitch = (channel, tags, message, self, client, options) => {
@@ -201,39 +191,87 @@ const handleSPSwitch = (channel, tags, message, self, client, options) => {
     const data = Buffer.from([0xFF]);
 
     writeToPointer(pointerAddress, offset, data);
-
-    client.say(channel, `@${tags.username} switched that silver!`);
 };
 
+const handleKaizo = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+
+    const proc = openProcess();    
+    
+    // here's our routine: https://www.smwcentral.net/?p=memorymap&game=smw&region=rom&address=00BEB0
+    const routine = proc.baseAddress + 0x00BEB0;
+    
+    // -------------------------------
+    // just some testing garbage here.
+    // in theory i should be able to write like crazy to 0x7F0000
+    const marioXSpeedByte = convertSMWCentralAddressToReal(0x007E007B);
+    
+    // lets write some data to the realaddress! who knows lolz.
+    memoryjs.writeBuffer(proc.handle, marioXSpeedByte, Buffer.from([0x7F]));
+
+    // -------------------------------
+
+};
+
+
+/**
+ * This fun little guy converts an address found in the MemoryMap of SMWCentral into
+ * an address that actually exists in our running application.
+ */
+const convertSMWCentralAddressToReal = (smwAddress) => {
+    // we know how to gather the correct address for mario's powerup location.
+    // we can use to this calculate an offset that we can then use for future
+    // addresses. might be a bit inefficient, but should work.
+
+    // here we just read in the address location to the powerup status.
+    const proc = openProcess();
+    const pointerToData = memoryjs.readBuffer(proc.handle, proc.baseAddress + 0x8D8BE8, 4).readIntLE(0, 4);
+    const actualPowerupAddress = pointerToData + 0x19;
+
+    // we have the actual (real) powerup address.  we can just calculate the offset from here.
+    // formula is RealAddress = SMWCentralAddress + Offset
+    const smwOffset = actualPowerupAddress - 0x007E0019;
+
+    // we caculated the offset, so now we just need to add that to the given
+    // address and that should handle our conversion correctly.
+    return smwAddress + smwOffset;
+};
+
+const openProcess = () => {
+    const snesId = memoryjs
+        .getProcesses()
+        .find(proc => proc.szExeFile.includes('snes'))
+        .th32ProcessID;
+    const process = memoryjs.openProcess(snesId);
+    const handle = process.handle;
+    const snesMod = memoryjs.getModules(snesId)
+        .find(mod => mod.szModule.includes('snes'));
+    const baseAddress = snesMod.modBaseAddr;
+    return {
+        handle,
+        baseAddress
+    };
+};
 
 /**
  * this function will write do a 1-depth pointer to the snes rom.
  */
 const writeToPointer = (pointerAddress, offset, dataBuffer) => {
-    // grab the processID from SNES9x (or the first 'snes' application)
-    const snesId = memoryjs
-        .getProcesses()
-        .find(proc => proc.szExeFile.includes('snes'))
-        .th32ProcessID;
-        
-    // open the process for read/write
-    const process = memoryjs.openProcess(snesId);
-    const handle = process.handle;
-    
-    // gather all of the modules for the process.
-    // this gives us our base memory address for memory allocated
-    // for our game.
-    const snesMod = memoryjs.getModules(snesId)
-        .find(mod => mod.szModule.includes('snes'));
-    const baseAddress = snesMod.modBaseAddr;
+
+    const proc = openProcess();
 
     // read in a 4 byte pointer to find the address of the data we're looking for.
     // note, we're using a specific endian syntax to reverse the bytes read.
-    const pointerToData = memoryjs.readBuffer(handle, baseAddress + pointerAddress, 4).readIntLE(0, 4);
+    const pointerToData = memoryjs.readBuffer(proc.handle, proc.baseAddress + pointerAddress, 4).readIntLE(0, 4);
     const pointerWithOffset = pointerToData + offset;
 
     // finally write it out
-    memoryjs.writeBuffer(handle, pointerWithOffset, dataBuffer);
+    memoryjs.writeBuffer(proc.handle, pointerWithOffset, dataBuffer);
 }
 
 const isNumeric = (str) => {

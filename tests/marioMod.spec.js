@@ -9,7 +9,11 @@ describe(`mariomod tests`, () => {
     beforeEach(() => mockClient.reset());
     afterEach(() => mockClient.reset());
 
-    it(`should time mario`, () => {
-        marioMod(null, {username: 'user'}, '!time 100', null, mockClient, null);
+    it(`should give cape`, () => {
+        marioMod(null, {username: 'user'}, '!cape', null, mockClient, null);
+    });
+
+    it(`should kaizo mario`, () => {
+        marioMod(null, {username: 'user'}, '!kaizo', null, mockClient, null);
     });
 });

@@ -27,14 +27,14 @@ const handleSwitches = (channel, tags, message, self, client, options) => {
 const handleSwitch = (channel, tags, message, self, client, options) => {
     // only streamers or mods can alter a switch.
     if (!users.isUserStreamerOrMod(tags)) {
-        client.say(`${tags.username} only a mod can do that.`);
+        client.say(channel, `${tags.username} only a mod can do that.`);
         return;
     }
 
     const tolower = message.toLowerCase();
     const switchname = tolower.split(' ')[1];
     if (!switchname) {
-        client.say(`${tags.username} !switch <switchName>`);
+        client.say(channel, `${tags.username} !switch <switchName>`);
         return;
     }
 
