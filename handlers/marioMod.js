@@ -31,6 +31,16 @@ module.exports = (channel, tags, message, self, client, options) => {
         handleHelp(channel, tags, message, self, client, options);
     else if (tolower.startsWith('!kaizo'))
         handleKaizo(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!water'))
+        handleWater(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!land'))
+        handleLand(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!ice'))
+        handleIce(channel, tags, message, self, client, options);
+    else if (tolower.startsWith('!thaw'))
+        handleThaw(channel, tags, message, self, client, options);
+
+
 
 
 
@@ -68,15 +78,55 @@ const handleTime = (channel, tags, message, self, client, options) => {
         .map(digit => parseInt(digit));
     const dataBuffer = Buffer.from(timeNumbers);
 
-    // after using CheatEngine, here's an offset to an address
-    // containing a pointer that ends up pointing to the correct address
-    // of the data that controls the timer shown on the screen.
-    const pointerAddress = 0x8D8BE8;
-    // and here's the offset to the location to find the actual data.
-    const offset = 0xF31
-
-    writeToPointer(pointerAddress, offset, dataBuffer);
+    writeToSWMAddress(0x007E0F31, dataBuffer);
 };
+
+const handleWater = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+
+    writeToSWMAddress(0x007E0085, Buffer.from([0x01]));
+};
+
+const handleIce = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+
+    writeToSWMAddress(0x007E0086, Buffer.from([0xFF]));
+};
+
+const handleThaw = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+
+    writeToSWMAddress(0x007E0086, Buffer.from([0x00]));
+};
+
+
+const handleLand = (channel, tags, message, self, client, options) => {
+
+    // first check our switches to see if the mariomod is actually on.
+    if(!switches.isSwitchOn(SWITCH_KEY)) {
+        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
+        return;
+    }
+
+    writeToSWMAddress(0x007E0085, Buffer.from([0x00]));
+};
+
+
 
 const handleBig = (channel, tags, message, self, client, options) => {
 
@@ -86,12 +136,9 @@ const handleBig = (channel, tags, message, self, client, options) => {
         return;
     }
 
-    const pointerAddress = 0x8D8BE8;
-    const offset = 0x19;
-    // 0 = small, 1 = big, 2 = cape, 3 = fireflower
     const data = Buffer.from([0x01]);
+    writeToSWMAddress(0x007E0019, data);
 
-    writeToPointer(pointerAddress, offset, data);
 };
 
 const handleSmall = (channel, tags, message, self, client, options) => {
@@ -102,12 +149,8 @@ const handleSmall = (channel, tags, message, self, client, options) => {
         return;
     }
 
-    const pointerAddress = 0x8D8BE8;
-    const offset = 0x19;
-    // 0 = small, 1 = big, 2 = cape, 3 = fireflower
     const data = Buffer.from([0x00]);
-
-    writeToPointer(pointerAddress, offset, data);
+    writeToSWMAddress(0x007E0019, data);
 };
 
 
@@ -119,12 +162,8 @@ const handleFlower = (channel, tags, message, self, client, options) => {
         return;
     }
 
-    const pointerAddress = 0x8D8BE8;
-    const offset = 0x19;
-    // 0 = small, 1 = big, 2 = cape, 3 = fireflower
     const data = Buffer.from([0x03]);
-
-    writeToPointer(pointerAddress, offset, data);
+    writeToSWMAddress(0x007E0019, data);
 };
 
 
@@ -136,12 +175,8 @@ const handleCape = (channel, tags, message, self, client, options) => {
         return;
     }
 
-    const pointerAddress = 0x8D8BE8;
-    const offset = 0x19;
-    // 0 = small, 1 = big, 2 = cape, 3 = fireflower
     const data = Buffer.from([0x02]);
-
-    writeToPointer(pointerAddress, offset, data);
+    writeToSWMAddress(0x007E0019, data);
 };
 
 const handleStar = (channel, tags, message, self, client, options) => {
@@ -169,12 +204,8 @@ const handlePSwitch = (channel, tags, message, self, client, options) => {
         return;
     }
 
-    const pointerAddress = 0x8D8BE8;
-    const offset = 0x14AD;
-    // this is the timer that counts down to 0, which ends the effect
     const data = Buffer.from([0xFF]);
-
-    writeToPointer(pointerAddress, offset, data);
+    writeToSWMAddress(0x007E14AD, data);
 };
 
 const handleSPSwitch = (channel, tags, message, self, client, options) => {
@@ -185,12 +216,8 @@ const handleSPSwitch = (channel, tags, message, self, client, options) => {
         return;
     }
 
-    const pointerAddress = 0x8D8BE8;
-    const offset = 0x14AE;
-    // this is the timer that counts down to 0, which ends the effect
     const data = Buffer.from([0xFF]);
-
-    writeToPointer(pointerAddress, offset, data);
+    writeToSWMAddress(0x007E14AE, data);
 };
 
 const handleKaizo = (channel, tags, message, self, client, options) => {
@@ -208,16 +235,30 @@ const handleKaizo = (channel, tags, message, self, client, options) => {
     
     // -------------------------------
     // just some testing garbage here.
-    // in theory i should be able to write like crazy to 0x7F0000
     const marioXSpeedByte = convertSMWCentralAddressToReal(0x007E007B);
+    const marioYSpeedByte = convertSMWCentralAddressToReal(0x007E007D);
+
     
     // lets write some data to the realaddress! who knows lolz.
-    memoryjs.writeBuffer(proc.handle, marioXSpeedByte, Buffer.from([0x7F]));
+    // memoryjs.writeBuffer(proc.handle, marioXSpeedByte, Buffer.from([0x7F]));
+    // memoryjs.writeBuffer(proc.handle, marioYSpeedByte, Buffer.from([0x80]));
+
+    memoryjs.writeBuffer(proc.handle, marioYSpeedByte, Buffer.from([0x7F]));
+
 
     // -------------------------------
 
 };
 
+/**
+ * Writes data to an address found on smwcentral.com.
+ * This function also converts the address into a real address found in SNES9x.
+ */
+const writeToSWMAddress = (address, data) => {
+    const realAddress = convertSMWCentralAddressToReal(address);
+    const proc = openProcess();
+    memoryjs.writeBuffer(proc.handle, realAddress, data);
+};
 
 /**
  * This fun little guy converts an address found in the MemoryMap of SMWCentral into
