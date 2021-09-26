@@ -53,5 +53,10 @@ describe(`mariomod tests`, () => {
         marioMod(null, {username: 'user'}, '!thaw', null, mockClient, null);
     });
 
+    fit(`should message`, () => {
+        marioMod(null, {username: 'user'}, '!messagebox Hello there! I am a message. Get bent strimmer.', null, mockClient, null);
+    });
+
+
 
 });
