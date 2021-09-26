@@ -56,8 +56,8 @@ module.exports = (channel, tags, message, self, client, options) => {
         });
     else if (tolower.startsWith('!messagebox'))
         switches.runIfSwitchIsOn(SWITCH_KEY, () => {
-            writeToPointer(0x08D8EF8, 0xA968, Buffer.from([0x1]));
-            writeToSWMAddress(0x007E1426, Buffer.from([0x01]));
+            // writeToPointer(0x08D8EF8, 0xA968, Buffer.from([0x1]));
+            // writeToSWMAddress(0x007E1426, Buffer.from([0x01]));
         });
     else if (tolower.startsWith('!offset'))
         switches.runIfSwitchIsOn(SWITCH_KEY, () => {
@@ -132,16 +132,8 @@ const handleKaizo = (channel, tags, message, self, client, options) => {
     const routine = proc.baseAddress + 0x00BEB0;
     
     // -------------------------------
-    // just some testing garbage here.
-    const marioXSpeedByte = convertSMWCentralAddressToReal(0x007E007B);
-    const marioYSpeedByte = convertSMWCentralAddressToReal(0x007E007D);
 
     
-    // lets write some data to the realaddress! who knows lolz.
-    // memoryjs.writeBuffer(proc.handle, marioXSpeedByte, Buffer.from([0x7F]));
-    // memoryjs.writeBuffer(proc.handle, marioYSpeedByte, Buffer.from([0x80]));
-
-    memoryjs.writeBuffer(proc.handle, marioYSpeedByte, Buffer.from([0x7F]));
 
 
     // -------------------------------
