@@ -12,59 +12,57 @@ module.exports = (channel, tags, message, self, client, options) => {
 
     const tolower = message.toLowerCase();
 
-    if (tolower.startsWith('!time'))
-        handleTime(channel, tags, message, self, client, options);
-    else if (tolower.startsWith('!cape'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0019, Buffer.from([0x02])));
-    else if (tolower.startsWith('!flower'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0019, Buffer.from([0x03])));
-    else if (tolower.startsWith('!star'))
-        handleStar(channel, tags, message, self, client, options);
-    else if (tolower.startsWith('!big'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0019, Buffer.from([0x01])));
-    else if (tolower.startsWith('!small'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0019, Buffer.from([0x00])));
-    else if (tolower.startsWith('!pswitch'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E14AD, Buffer.from([0xFF])));
-    else if (tolower.startsWith('!spswitch'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E14AE, Buffer.from([0xFF])));
-    else if (tolower.startsWith('!mariomod'))
-        handleHelp(channel, tags, message, self, client, options);
-    else if (tolower.startsWith('!kaizo'))
-        handleKaizo(channel, tags, message, self, client, options);
-    else if (tolower.startsWith('!water'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0085, Buffer.from([0x01])));
-    else if (tolower.startsWith('!land'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0085, Buffer.from([0x00])));
-    else if (tolower.startsWith('!ice'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0086, Buffer.from([0xFF])));
-    else if (tolower.startsWith('!thaw'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => writeToSWMAddress(0x007E0086, Buffer.from([0x00])));
-    else if (tolower.startsWith('!pballoon'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => {
+
+    switches.runIfSwitchIsOn(SWITCH_KEY, () => {
+        if (tolower.startsWith('!time'))
+            handleTime(channel, tags, message, self, client, options);
+        else if (tolower.startsWith('!cape'))
+            writeToSWMAddress(0x007E0019, Buffer.from([0x02]));
+        else if (tolower.startsWith('!flower'))
+            writeToSWMAddress(0x007E0019, Buffer.from([0x03]));
+        else if (tolower.startsWith('!star'))
+            handleStar(channel, tags, message, self, client, options);
+        else if (tolower.startsWith('!big'))
+            writeToSWMAddress(0x007E0019, Buffer.from([0x01]));
+        else if (tolower.startsWith('!small'))
+            writeToSWMAddress(0x007E0019, Buffer.from([0x00]));
+        else if (tolower.startsWith('!pswitch'))
+            writeToSWMAddress(0x007E14AD, Buffer.from([0xFF]));
+        else if (tolower.startsWith('!spswitch'))
+            writeToSWMAddress(0x007E14AE, Buffer.from([0xFF]));
+        else if (tolower.startsWith('!mariomod'))
+            handleHelp(channel, tags, message, self, client, options);
+        else if (tolower.startsWith('!kaizo'))
+            handleKaizo(channel, tags, message, self, client, options);
+        else if (tolower.startsWith('!water'))
+            writeToSWMAddress(0x007E0085, Buffer.from([0x01]));
+        else if (tolower.startsWith('!land'))
+            writeToSWMAddress(0x007E0085, Buffer.from([0x00]));
+        else if (tolower.startsWith('!ice'))
+            writeToSWMAddress(0x007E0086, Buffer.from([0xFF]));
+        else if (tolower.startsWith('!thaw'))
+            writeToSWMAddress(0x007E0086, Buffer.from([0x00]));
+        else if (tolower.startsWith('!pballoon')) {
             // writeToSWMAddress(0x007E13F3, Buffer.from([0x09]));
             // writeToSWMAddress(0x007E1891, Buffer.from([0xFF]));
-        });
-    else if (tolower.startsWith('!kickright'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => {
+        }
+        else if (tolower.startsWith('!kickright')) {
             writeToSWMAddress(0x007E007B, Buffer.from([0x7F]));
             writeToSWMAddress(0x007E007D, Buffer.from([0x80]));
-        });
-    else if (tolower.startsWith('!kickleft'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => {
+        }
+        else if (tolower.startsWith('!kickleft')) {
             writeToSWMAddress(0x007E007B, Buffer.from([0x80]));
             writeToSWMAddress(0x007E007D, Buffer.from([0x80]));
-        });
-    else if (tolower.startsWith('!messagebox'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => {
+        }
+        else if (tolower.startsWith('!messagebox'))
             handleMessage(channel, tags, message, self, client, options);
-        });
-    else if (tolower.startsWith('!offset'))
-        switches.runIfSwitchIsOn(SWITCH_KEY, () => {
+        else if (tolower.startsWith('!offset')) {
             const offset = convertSMWCentralAddressToReal(0x0);
-            client.say(channel, `The current offset is :${offset.toString(16)}.`)
-        });
-    return;
+            client.say(channel, `The current offset is :${offset.toString(16)}.`);
+        }
+
+    });
+
 }
 
 const handleHelp = (channel, tags, message, self, client, options) => {

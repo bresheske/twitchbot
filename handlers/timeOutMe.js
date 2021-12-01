@@ -6,5 +6,7 @@ module.exports = (channel, tags, message, self, client) => {
         return;
 
     const user = tags.username;
-    client.say(channel, `/timeout ${user} 10 "get recked nerd"`);
+    client.say(channel, `/timeout ${user} 10 "get wrecked nerd!"`);
+    client.say(channel, `${user} get wrecked nerd!`);
+
 }

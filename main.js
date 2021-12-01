@@ -45,5 +45,5 @@ client.on('message', (channel, tags, message, self) => {
     catch(ex) {
       console.error(ex);
     }
-  })
+  });
 });
