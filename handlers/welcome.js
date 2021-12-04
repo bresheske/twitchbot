@@ -1,4 +1,4 @@
-const doOneEvery = require('../utils/timers/doOneEvery');
+const timers = require('../utils/timers/actionTimers');
 const pickOneOf = require('../utils/random/pickOneOf');
 
 /**
@@ -12,7 +12,7 @@ module.exports = (channel, tags, message, self, client) => {
         `what's shakin, bacon?`,
         `what's up?`
     ]);
-    doOneEvery(secondsInDay, `welcomeHandler-${username}`, () => {
+    timers.doOneEvery(secondsInDay, `welcomeHandler-${username}`, () => {
         client.say(channel, `yo @${username}! ${sillymessage}`);
     });
 }

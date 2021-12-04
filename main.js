@@ -1,26 +1,28 @@
-// Big list of setup.
-const apiKey = process.env.API_KEY;
-if (!apiKey) {
-  console.error(`Required API_KEY in .env file missing.`);
-  process.exit(1);
-}
-
 const tmi = require('tmi.js');
-const client = new tmi.Client({
-  options: { debug: true },
-  connection: {
-    secure: true,
-    reconnect: true
-  },
-  identity: {
-    username: 'mr_bucket_bot',
-    password: apiKey
-  },
-  channels: ['bucketofwetbees']
-});
 
-// Big list of handlers.
-const handlers = [
+// function to connect to twitch IRC.
+const connect = (username, apikey, channels) => {
+  const client = new tmi.Client({
+    options: { debug: true },
+    connection: {
+      secure: true,
+      reconnect: true
+    },
+    identity: {
+      username: username,
+      password: apikey
+    },
+    channels: channels
+  });
+  return client;
+};
+
+// two connections - one for mod and one for admin.
+const modClient = connect(`mr_bucket_bot`, process.env.MOD_API_KEY, [`bucketofwetbees`]);
+const adminClient = connect(`bucketofwetbees`, process.env.ADMIN_API_KEY, [`bucketofwetbees`]);
+
+// mod code here
+const modHandlers = [
   require('./handlers/shoutout'),
   require('./handlers/yo'),
   require('./handlers/welcome'),
@@ -31,16 +33,36 @@ const handlers = [
   require('./handlers/switches')
 ];
 
-client.connect();
-
-client.on('message', (channel, tags, message, self) => {
+modClient.connect();
+modClient.on('message', (channel, tags, message, self) => {
   // Ignore echoed messages.
   if(self)
     return;
 
-  handlers.forEach(handler => {
+  modHandlers.forEach(handler => {
     try {
-      handler(channel, tags, message, self, client);
+      handler(channel, tags, message, self, modClient);
+    }
+    catch(ex) {
+      console.error(ex);
+    }
+  });
+});
+
+// admin code down here.
+const adminHandlers = [
+  require('./handlers/timeouthops'),
+];
+
+adminClient.connect();
+adminClient.on('message', (channel, tags, message, self) => {
+  // Ignore echoed messages.
+  if(self)
+    return;
+
+  adminHandlers.forEach(handler => {
+    try {
+      handler(channel, tags, message, self, adminClient);
     }
     catch(ex) {
       console.error(ex);

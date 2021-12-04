@@ -12,7 +12,7 @@ const currentTimeInSeconds = () => Math.floor(Date.now() / 1000);
  * @param {*} name - name of the action.
  * @param {*} action - action to be called once every X seconds.
  */
-module.exports = (seconds, name, action) => {
+const doOneEvery = (seconds, name, action) => {
     // first gather the previous action by the name.
     const previousAction = actionStorage.find((a) => a.name === name);
     const currentTime = currentTimeInSeconds();
@@ -29,3 +29,30 @@ module.exports = (seconds, name, action) => {
     }
     // otherwise, we throttle the call and do nothing.
 };
+
+/**
+ * returns true or false if an action can be executed yet.
+ * @param {*} seconds - number of seconds to throttle calls by.
+ * @param {*} name - name of the action.
+ */
+const canDoOneEvery = (seconds, name) => {
+    // first gather the previous action by the name.
+    const previousAction = actionStorage.find((a) => a.name === name);
+    const currentTime = currentTimeInSeconds();
+    // no action? then we kick off a new one.
+    if (!previousAction) {
+        return true;
+    }
+    // we have a previous action, but we have already waited long enough.
+    // OR - seconds is set to 0, which is mostly for testing environments.
+    else if (seconds == 0 || previousAction.time + seconds <= currentTime) {
+        return true;
+    }
+    // otherwise, we throttle the call and do nothing.
+    return false;
+};
+
+module.exports = {
+    doOneEvery,
+    canDoOneEvery
+}

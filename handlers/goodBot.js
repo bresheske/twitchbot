@@ -1,4 +1,4 @@
-const doOneEvery = require('../utils/timers/doOneEvery');
+const timers = require('../utils/timers/actionTimers');
 const pickOneOf = require('../utils/random/pickOneOf');
 
 /**
@@ -7,7 +7,7 @@ const pickOneOf = require('../utils/random/pickOneOf');
 module.exports = (channel, tags, message, self, client) => {
     if(message.toLowerCase() !== 'good bot')
         return;
-    doOneEvery(30, 'goodBotHandler', () => {
+    timers.doOneEvery(30, 'goodBotHandler', () => {
         client.say(channel, `<3`);
     });
 };

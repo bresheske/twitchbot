@@ -1,4 +1,3 @@
-const doOneEvery = require('../utils/timers/doOneEvery');
 const memoryjs = require('memoryjs');
 const wordwrap = require('wordwrap');
 const switches = require('../utils/storage/switches');

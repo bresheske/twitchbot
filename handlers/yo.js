@@ -1,4 +1,4 @@
-const doOneEvery = require('../utils/timers/doOneEvery');
+const timers = require('../utils/timers/actionTimers');
 
 /**
  * a silly handler to respond 'yo' based on a timer.
@@ -30,7 +30,7 @@ module.exports = (channel, tags, message, self, client, options) => {
         ? 30
         : options.delaySeconds;
 
-    doOneEvery(options.delaySeconds, 'yoHandler', () => {
+        timers.doOneEvery(options.delaySeconds, 'yoHandler', () => {
         client.say(channel, `yo`);
     });
 }
