@@ -26,7 +26,7 @@ module.exports = (channel, tags, message, self, client) => {
             });
         }
         else {
-            client.say(channel, `/timeout ${tags.username} 69 suck it ${tags.username}!`);
+            client.say(channel, `/timeout ${tags.username} 20 suck it ${tags.username}!`);
             client.say(channel, `suck it ${tags.username}!`);
         }
     });
