@@ -1,4 +1,5 @@
 const timers = require('../utils/timers/actionTimers');
+const switches = require('../utils/storage/switches');
 
 /**
  * a silly little handler to timeout a moderator, but had some extra features.
@@ -13,17 +14,21 @@ module.exports = (channel, tags, message, self, client) => {
     if(message.toLowerCase() !== '!timeouthops')
         return;
 
-    // check to see if the next action can actually be executed.
-    if (timers.canDoOneEvery(600, `timeouthops`)) {
-        // we can timeouthops - but we'll want to use the doOnceEvery to
-        // make sure we register another action timer.
-        timers.doOneEvery(600, `timeouthops`, () => {
-            client.say(channel, `/timeout mrhops22 10 suck it hops!`);
-            client.say(channel, `suck it hops!`);
-        });
-    }
-    else {
-        client.say(channel, `/timeout ${tags.username} 69 suck it ${tags.username}!`);
-        client.say(channel, `suck it ${tags.username}!`);
-    }
+    // check to see if the switch is on.  only do this if it is.
+    switches.runIfSwitchIsOn(`timeouthops`, () => {
+        // check to see if the next action can actually be executed.
+        if (timers.canDoOneEvery(600, `timeouthops`)) {
+            // we can timeouthops - but we'll want to use the doOnceEvery to
+            // make sure we register another action timer.
+            timers.doOneEvery(600, `timeouthops`, () => {
+                client.say(channel, `/timeout mrhops22 10 suck it hops!`);
+                client.say(channel, `suck it hops!`);
+            });
+        }
+        else {
+            client.say(channel, `/timeout ${tags.username} 69 suck it ${tags.username}!`);
+            client.say(channel, `suck it ${tags.username}!`);
+        }
+    });
+
 }
