@@ -21,7 +21,7 @@ describe(`mariomod tests`, () => {
         marioMod(null, {username: 'user'}, '!time 100', null, mockClient, null);
     });
 
-    it(`should big`, () => {
+    fit(`should big`, () => {
         marioMod(null, {username: 'user'}, '!big', null, mockClient, null);
     });
 

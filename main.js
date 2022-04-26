@@ -23,12 +23,12 @@ const adminClient = connect(`bucketofwetbees`, process.env.ADMIN_API_KEY, [`buck
 
 // mod code here
 const modHandlers = [
-  require('./handlers/shoutout'),
-  require('./handlers/yo'),
-  require('./handlers/welcome'),
-  require('./handlers/goodBot'),
-  require('./handlers/followBan'),
-  require('./handlers/timeOutMe'),
+  // require('./handlers/shoutout'),
+  // require('./handlers/yo'),
+  // require('./handlers/welcome'),
+  // require('./handlers/goodBot'),
+  // require('./handlers/followBan'),
+  // require('./handlers/timeOutMe'),
   require('./handlers/marioMod'),
   require('./handlers/switches')
 ];

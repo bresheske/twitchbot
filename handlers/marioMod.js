@@ -276,6 +276,7 @@ const convertTextToSMWMessage = (message, username) => {
 const writeToSWMAddress = (address, data) => {
     const realAddress = convertSMWCentralAddressToReal(address);
     const proc = openProcess();
+
     memoryjs.writeBuffer(proc.handle, realAddress, data);
 };
 
@@ -290,7 +291,8 @@ const convertSMWCentralAddressToReal = (smwAddress) => {
 
     // here we just read in the address location to the powerup status.
     const proc = openProcess();
-    const pointerToData = memoryjs.readBuffer(proc.handle, proc.baseAddress + 0x8D8BE8, 4).readIntLE(0, 4);
+    const pointerToData = memoryjs.readBuffer(proc.handle, proc.baseAddress + 0x36E50F, 4).readIntLE(0, 4);
+
     const actualPowerupAddress = pointerToData + 0x19;
 
     // we have the actual (real) powerup address.  we can just calculate the offset from here.
@@ -303,14 +305,16 @@ const convertSMWCentralAddressToReal = (smwAddress) => {
 };
 
 const openProcess = () => {
+
     const snesId = memoryjs
         .getProcesses()
-        .find(proc => proc.szExeFile.includes('snes'))
+        .find(proc => proc.szExeFile.includes('retroarch'))
         .th32ProcessID;
     const process = memoryjs.openProcess(snesId);
     const handle = process.handle;
+
     const snesMod = memoryjs.getModules(snesId)
-        .find(mod => mod.szModule.includes('snes'));
+        .find(mod => mod.szModule.includes('snes9x_libretro'));
     const baseAddress = snesMod.modBaseAddr;
     return {
         handle,
