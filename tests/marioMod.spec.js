@@ -9,16 +9,16 @@ describe(`mariomod tests`, () => {
     beforeEach(() => mockClient.reset());
     afterEach(() => mockClient.reset());
 
-    fit(`should give cape`, () => {
+    it(`should give cape`, () => {
         marioMod(null, {username: 'user'}, '!cape', null, mockClient, null);
     });
 
-    it(`should kaizo mario`, () => {
-        marioMod(null, {username: 'user'}, '!kaizo', null, mockClient, null);
+    it(`should kick left`, () => {
+        marioMod(null, {username: 'user'}, '!kickleft', null, mockClient, null);
     });
 
-    it(`should alter timer`, () => {
-        marioMod(null, {username: 'user'}, '!time 100', null, mockClient, null);
+    fit(`should kick right`, () => {
+        marioMod(null, {username: 'user'}, '!kickright', null, mockClient, null);
     });
 
     it(`should big`, () => {
@@ -52,11 +52,5 @@ describe(`mariomod tests`, () => {
     it(`should thaw`, () => {
         marioMod(null, {username: 'user'}, '!thaw', null, mockClient, null);
     });
-
-    it(`should message`, () => {
-        marioMod(null, {username: 'user'}, '!messagebox Hello there! I am a message. Get bent strimmer.', null, mockClient, null);
-    });
-
-
 
 });

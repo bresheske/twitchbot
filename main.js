@@ -19,7 +19,7 @@ const connect = (username, apikey, channels) => {
 
 // two connections - one for mod and one for admin.
 const modClient = connect(`mr_bucket_bot`, process.env.MOD_API_KEY, [`bucketofwetbees`]);
-const adminClient = connect(`bucketofwetbees`, process.env.ADMIN_API_KEY, [`bucketofwetbees`]);
+// const adminClient = connect(`bucketofwetbees`, process.env.ADMIN_API_KEY, [`bucketofwetbees`]);
 
 // mod code here
 const modHandlers = [
@@ -54,18 +54,18 @@ const adminHandlers = [
   require('./handlers/timeouthops'),
 ];
 
-adminClient.connect();
-adminClient.on('message', (channel, tags, message, self) => {
-  // Ignore echoed messages.
-  if(self)
-    return;
+// adminClient.connect();
+// adminClient.on('message', (channel, tags, message, self) => {
+//   // Ignore echoed messages.
+//   if(self)
+//     return;
 
-  adminHandlers.forEach(handler => {
-    try {
-      handler(channel, tags, message, self, adminClient);
-    }
-    catch(ex) {
-      console.error(ex);
-    }
-  });
-});
+//   adminHandlers.forEach(handler => {
+//     try {
+//       handler(channel, tags, message, self, adminClient);
+//     }
+//     catch(ex) {
+//       console.error(ex);
+//     }
+//   });
+// });

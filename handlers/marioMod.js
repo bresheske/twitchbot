@@ -1,3 +1,12 @@
+/**
+ * This is a memory-injector for RetroArch running a Snes9x Core.
+ * 
+ * NOTE: THIS REQUIRES FRAME RUN-AHEAD TO BE TURNED OFF.
+ * 
+ */
+
+
+
 const memoryjs = require('memoryjs');
 const wordwrap = require('wordwrap');
 const switches = require('../utils/storage/switches');
@@ -11,16 +20,15 @@ module.exports = (channel, tags, message, self, client, options) => {
 
     const tolower = message.toLowerCase();
 
-
     switches.runIfSwitchIsOn(SWITCH_KEY, () => {
-        if (tolower.startsWith('!time'))
-            handleTime(channel, tags, message, self, client, options);
-        else if (tolower.startsWith('!cape'))
+        // if (tolower.startsWith('!time'))
+        //     handleTime(channel, tags, message, self, client, options);
+        if (tolower.startsWith('!cape'))
             writeToSWMAddress(0x007E0019, Buffer.from([0x02]));
         else if (tolower.startsWith('!flower'))
             writeToSWMAddress(0x007E0019, Buffer.from([0x03]));
         else if (tolower.startsWith('!star'))
-            handleStar(channel, tags, message, self, client, options);
+            writeToSWMAddress(0x007E1490, Buffer.from([0xFF]));
         else if (tolower.startsWith('!big'))
             writeToSWMAddress(0x007E0019, Buffer.from([0x01]));
         else if (tolower.startsWith('!small'))
@@ -31,8 +39,8 @@ module.exports = (channel, tags, message, self, client, options) => {
             writeToSWMAddress(0x007E14AE, Buffer.from([0xFF]));
         else if (tolower.startsWith('!mariomod'))
             handleHelp(channel, tags, message, self, client, options);
-        else if (tolower.startsWith('!kaizo'))
-            handleKaizo(channel, tags, message, self, client, options);
+        // else if (tolower.startsWith('!kaizo'))
+        //     handleKaizo(channel, tags, message, self, client, options);
         else if (tolower.startsWith('!water'))
             writeToSWMAddress(0x007E0085, Buffer.from([0x01]));
         else if (tolower.startsWith('!land'))
@@ -41,10 +49,10 @@ module.exports = (channel, tags, message, self, client, options) => {
             writeToSWMAddress(0x007E0086, Buffer.from([0xFF]));
         else if (tolower.startsWith('!thaw'))
             writeToSWMAddress(0x007E0086, Buffer.from([0x00]));
-        else if (tolower.startsWith('!pballoon')) {
-            // writeToSWMAddress(0x007E13F3, Buffer.from([0x09]));
-            // writeToSWMAddress(0x007E1891, Buffer.from([0xFF]));
-        }
+        // else if (tolower.startsWith('!pballoon')) {
+        //     writeToSWMAddress(0x007E13F3, Buffer.from([0x09]));
+        //     writeToSWMAddress(0x007E1891, Buffer.from([0xFF]));
+        // }
         else if (tolower.startsWith('!kickright')) {
             writeToSWMAddress(0x007E007B, Buffer.from([0x7F]));
             writeToSWMAddress(0x007E007D, Buffer.from([0x80]));
@@ -53,12 +61,12 @@ module.exports = (channel, tags, message, self, client, options) => {
             writeToSWMAddress(0x007E007B, Buffer.from([0x80]));
             writeToSWMAddress(0x007E007D, Buffer.from([0x80]));
         }
-        else if (tolower.startsWith('!messagebox'))
-            handleMessage(channel, tags, message, self, client, options);
-        else if (tolower.startsWith('!offset')) {
-            const offset = convertSMWCentralAddressToReal(0x0);
-            client.say(channel, `The current offset is :${offset.toString(16)}.`);
-        }
+        // else if (tolower.startsWith('!messagebox'))
+        //     handleMessage(channel, tags, message, self, client, options);
+        // else if (tolower.startsWith('!offset')) {
+        //     const offset = convertSMWCentralAddressToReal(0x0);
+        //     client.say(channel, `The current offset is :${offset.toString(16)}.`);
+        // }
 
     });
 
@@ -68,10 +76,9 @@ const handleHelp = (channel, tags, message, self, client, options) => {
     const status = switches.isSwitchOn(SWITCH_KEY);
     let out = `@${tags.username} MarioMod is currently set to ${status ? 'ON' : 'OFF'}.`;
     if (status)
-        out += `  List of fun commands you have access to: !cape, !flower, !star, !big, !small, !pswitch, !spswitch, !water, !land, !ice, !thaw, !kickright, !kickleft, !time <3-digit time>`;
+        out += `  List of fun commands you have access to: !cape, !flower, !star, !big, !small, !pswitch, !spswitch, !water, !land, !ice, !thaw, !kickright, !kickleft`;
     client.say(channel, out);
 };
-
 
 const handleTime = (channel, tags, message, self, client, options) => {
 
@@ -96,23 +103,6 @@ const handleTime = (channel, tags, message, self, client, options) => {
     const dataBuffer = Buffer.from(timeNumbers);
 
     writeToSWMAddress(0x007E0F31, dataBuffer);
-};
-
-const handleStar = (channel, tags, message, self, client, options) => {
-
-    // first check our switches to see if the mariomod is actually on.
-    if(!switches.isSwitchOn(SWITCH_KEY)) {
-        client.say(channel, `@${tags.username} MarioMod switch is currently off.`);
-        return;
-    }
-
-    const pointerAddress = 0x8D8BE8;
-    const offset = 0x1490;
-    // this is the timer that counts down to 0, which ends the star effect.
-    const data = Buffer.from([0xFF]);
-
-    writeToPointer(pointerAddress, offset, data);
-
 };
 
 const handleMessage = (channel, tags, message, self, client, options) => {

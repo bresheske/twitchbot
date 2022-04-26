@@ -15,3 +15,7 @@ API_KEY=oauth:<rest of twitch api key>
  ```
 
  - Run `npm start`
+
+# GENERATE A KEY HERE
+
+ - https://twitchapps.com/tmi/
