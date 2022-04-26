@@ -9,7 +9,7 @@ describe(`mariomod tests`, () => {
     beforeEach(() => mockClient.reset());
     afterEach(() => mockClient.reset());
 
-    it(`should give cape`, () => {
+    fit(`should give cape`, () => {
         marioMod(null, {username: 'user'}, '!cape', null, mockClient, null);
     });
 
@@ -21,7 +21,7 @@ describe(`mariomod tests`, () => {
         marioMod(null, {username: 'user'}, '!time 100', null, mockClient, null);
     });
 
-    fit(`should big`, () => {
+    it(`should big`, () => {
         marioMod(null, {username: 'user'}, '!big', null, mockClient, null);
     });
 

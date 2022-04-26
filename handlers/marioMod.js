@@ -276,7 +276,7 @@ const convertTextToSMWMessage = (message, username) => {
 const writeToSWMAddress = (address, data) => {
     const realAddress = convertSMWCentralAddressToReal(address);
     const proc = openProcess();
-
+    console.log(`WRITING '${data.toString('hex')}' TO '${realAddress.toString(16)}'`);
     memoryjs.writeBuffer(proc.handle, realAddress, data);
 };
 
@@ -291,7 +291,7 @@ const convertSMWCentralAddressToReal = (smwAddress) => {
 
     // here we just read in the address location to the powerup status.
     const proc = openProcess();
-    const pointerToData = memoryjs.readBuffer(proc.handle, proc.baseAddress + 0x36E50F, 4).readIntLE(0, 4);
+    const pointerToData = memoryjs.readBuffer(proc.handle, proc.baseAddress + 0x36E5A0, 4).readIntLE(0, 4);
 
     const actualPowerupAddress = pointerToData + 0x19;
 
